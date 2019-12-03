@@ -2,6 +2,7 @@ import * as _ from "lodash";
 import Vue from "vue/dist/vue.js";
 import "normalize.css/normalize.css";
 import "purecss/build/pure-min.css";
+import "purecss/build/grids-responsive-min.css"
 import "./main.css";
 
 

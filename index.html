@@ -7,27 +7,24 @@
     <meta name="description" content="Thin Airfoil Theory of arbitrary airfoil shape">
     <meta name="keywords" content="airfoil,theory">
     <meta name="author" content="John Dews-Flick">
-    <style media="screen">
-      .green{
-        color: green;
-      }
-    </style>
 </head>
 
 <body>
     <div id="app">
         <div class="">
-            <div class="pure-g" style="max-width: 1100px; margin:auto; padding-top: 50px;">
-                <div class="pure-u-1-2"><canvas id="airfoil" width="500" height="300" style="border:2px solid;"></canvas>
+            <div class="pure-g" style="max-width: 1200px; margin:auto; padding-top: 50px;">
+                <div class="pure-u-1 pure-u-lg-1-2"><canvas id="airfoil" width="500" height="300" style="border:2px solid;"></canvas>
                 <p v-if="stats">Cord Length: {{stats.cord}}px</p>
                 </div>
-                <div class="pure-u-1-2">
+                <div class="pure-u-1 pure-u-lg-1-2">
+                  <div class="p-1">
                     <h3 style="padding:0; margin:0">Find Lift Coefficient of an Arbitrary Airfoil <br><small>This program calculates the mean camber line (show in red) from the airfoil draw then uses thin airfoil theory to find the lift coefficient.</small> </h3>
                     <p><b>Instructions: </b>Draw the airfoil within the box provided, where the dashed line is the cord. If you wish to do another airfoil refresh the page. Match to some known airfoils from <a target="_blank" href="http://airfoiltools.com/airfoil/details?airfoil=naca4412-il">here</a> to compare results</p>
                     <button class="pure-button pure-button-primary" @click="Runtime()" v-if="fresh">Compute</button>
                     <a class="pure-button" target="_blank" href="https://en.wikipedia.org/wiki/Airfoil#Derivation_of_thin_airfoil_theory">Learn Theory</a>
                     <a class="pure-button" target="_blank" href="https://github.com/ChooseDews/ThinAirfoilDraw">Github & Usage Example</a>
                     <p> Created by <a href="https://github.com/ChooseDews">John Dews-Flick</a> studying at the University of Florida. The results obtained are purely for fun. </p>
+                  </div>
                 </div>
                 <div class="pure-u-1" style="padding: 20px" v-if="stats">
                     <table class="pure-table" style="margin:auto">
