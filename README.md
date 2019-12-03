@@ -1,4 +1,4 @@
-## Thin Lifting Theory From An Arbitary Airfoil
+## Thin Lifting Theory From An Arbitrary Airfoil
 
 ## [Demo](https://choosedews.github.io/ThinAirFoilDraw/ "Demo")
 
