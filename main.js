@@ -1,60 +1,13 @@
-
-
 import * as _ from "lodash";
-//App imports
 import Vue from "vue/dist/vue.js";
-//import css
 import "normalize.css/normalize.css";
 import "purecss/build/pure-min.css";
 import "./main.css";
 
-let drawPoint = (x, c, r) => {
-    let graphics = new PIXI.Graphics();
-    graphics.beginFill(c || 0xe74c3c); // Red
-    graphics.drawCircle(...coordinateTransform(x), r || 1); // drawCircle(x, y, radius)
-    graphics.endFill();
-    stage.addChild(graphics);
-};
 
-function transpose(a) {
+let transpose = s => s[0].map((_, c) => s.map(r => r[c]));
 
-    // Calculate the width and height of the Array
-    var w = a.length || 0;
-    var h = a[0] instanceof Array ? a[0].length : 0;
-
-    // In case it is a zero matrix, no transpose routine needed.
-    if (h === 0 || w === 0) {
-        return [];
-    }
-
-    /**
-     * @var {Number} i Counter
-     * @var {Number} j Counter
-     * @var {Array} t Transposed data is stored in this array.
-     */
-    var i, j, t = [];
-
-    // Loop through every item in the outer array (height)
-    for (i = 0; i < h; i++) {
-
-        // Insert a new row (array)
-        t[i] = [];
-
-        // Loop through every item per item in outer array (width)
-        for (j = 0; j < w; j++) {
-
-            // Save transposed data.
-            t[i][j] = a[j][i];
-        }
-    }
-
-    return t;
-}
-
-
-
-
-var x = "black",
+let x = "black",
     y = 2,
     h,
     w,
@@ -65,16 +18,12 @@ var x = "black",
     currY = 0,
     dot_flag = false;
 
-var x = "black",
-    y = 2;
-
 function init() {
     canvas = document.getElementById('airfoil');
     console.log(canvas.width)
     ctx = canvas.getContext("2d");
     w = canvas.width;
     h = canvas.height;
-
     canvas.addEventListener("mousemove", function(e) {
         findxy('move', e)
     }, false);
@@ -88,7 +37,6 @@ function init() {
         findxy('out', e)
     }, false);
 }
-
 
 function draw() {
     ctx.beginPath();
@@ -125,24 +73,8 @@ function drawDashedLine(from, to) {
     ctx.stroke();
     ctx.closePath();
     ctx.setLineDash([]);
-
 }
 
-
-function erase() {
-    var m = confirm("Want to clear");
-    if (m) {
-        ctx.clearRect(0, 0, w, h);
-        document.getElementById("canvasimg").style.display = "none";
-    }
-}
-
-function save() {
-    document.getElementById("canvasimg").style.border = "2px solid";
-    var dataURL = canvas.toDataURL();
-    document.getElementById("canvasimg").src = dataURL;
-    document.getElementById("canvasimg").style.display = "inline";
-}
 
 function findxy(res, e) {
     if (res == 'down') {
@@ -150,7 +82,6 @@ function findxy(res, e) {
         prevY = currY;
         currX = e.clientX - canvas.offsetLeft;
         currY = e.clientY - canvas.offsetTop;
-
         flag = true;
         dot_flag = true;
         if (dot_flag) {
@@ -175,18 +106,11 @@ function findxy(res, e) {
     }
 }
 
-
-function getTop() {
-    var imageData = ctx.getImageData(0, 0, 500, 300);
-    let dataWidth = 500;
+function Runtime() {
+    var imageData = ctx.getImageData(0, 0, 500, 300); //get all the pixel data
+    let dataWidth = 500; //width and height hard coded
     let dataHeight = 300;
-
-
-    console.log(dataWidth * dataHeight)
-
     var data = imageData.data;
-
-
     //
     // iterate over all pixels
     let points = [];
@@ -195,148 +119,86 @@ function getTop() {
         var green = data[i + 1];
         var blue = data[i + 2];
         var alpha = data[i + 3];
-        points.push(red + green + blue + alpha)
-
+        points.push(red + green + blue + alpha); //just add'em all together why not white would = 0
     }
-
-    console.log(points, points.length);
-
-    let rows = _.chunk(points, 500);
-    rows = _.drop(rows, 50)
-    rows = _.dropRight(rows, 50);
-    let dashed = rows.splice(99, 2) //remove dashed line from data
-    console.log(rows);
-    let cols = transpose(rows)
-
-
-
-
+    let rows = _.chunk(points, 500); //1D -> 2D Array
+    rows = _.drop(rows, 50);
+    rows = _.dropRight(rows, 50); //drop top and bottom 50 rows to remove text from data
+    let dashed = rows.splice(99, 2) //remove dashed cord line from data
+    let cols = transpose(rows);
     let lastFoundX;
     let lastFoundY;
-
-
-    let topScatter = [];
+    let topScatter = []; //all the position[x]=y of the edge of the top
     let bottomScatter = [];
     let TopXVales = [];
     let BottomXVales = [];
-
-
-
     for (let c in cols) {
         let col = cols[c];
         for (let i in col) {
             let pixel = col[i];
+            if (pixel > 200) { //if the pixel is not white
 
-            if (pixel > 200) {
-
-
-
-                if (lastFoundX == c && Math.abs(lastFoundY - i) < 3) {
-
-
-
-                } else {
-
-
+                //this part does a little pixel fuzzy work within each col of the image to locate top and bottom positions
+                if (lastFoundX == c && Math.abs(lastFoundY - i) < 3) {} else {
                     if (i < 99) {
-                        topScatter[c] = Math.abs(i - 99);
+                        topScatter[c] = Math.abs(i - 99); //absolte value just ensure we are on the right side of the line
                         TopXVales.push(c);
                     }
                     if (i >= 99) {
-                        bottomScatter[c] = -Math.abs(i - 99);
+                        bottomScatter[c] = -Math.abs(i - 99); //always negative
                         BottomXVales.push(c);
                     }
-
                 }
-
-
                 lastFoundX = c;
                 lastFoundY = i;
-
-            } else {
-                cols[c][i] = 0
             }
-
-
-
         }
     }
-    let XVales = _.intersection(TopXVales, BottomXVales);
-
-
+    let XVales = _.intersection(TopXVales, BottomXVales); //find x-values where we have a top and bottom
     let meanCord = [];
-
     for (let x of XVales) {
-
-        let meanY = (topScatter[x] + bottomScatter[x]) / 2;
+        let meanY = (topScatter[x] + bottomScatter[x]) / 2; //calculate mean of two numbers
         meanCord[x] = meanY;
-
         ctx.fillStyle = "#FF0000";
-
         ctx.fillRect(x, 150 - meanY, 1, 1);
-
-
-
-
     }
+    let cord = XVales[XVales.length - 1] - XVales[0]; //cord length in pixels
+    let stepSize = 0.001;
+    console.log('Cord', cord+"px")
 
-
-    let cord = XVales[XVales.length - 1] - XVales[0];
-
-
-
-
-    //a_0 =
-
-    function solveA_0() {
-
-
-        let stepSize = 0.005
+    //see theory link for math behind A_0 & A_1
+    function solveA_0() {//We are solving an integral 0->PI Riemann Sum
         let value = 0;
-
         for (let θ = 0; θ < Math.PI; θ = θ + stepSize) {
-            let x = cord * (1 - Math.cos(θ)) / 2 + Number(XVales[0]);
-
+            let x = cord * (1 - Math.cos(θ)) / 2 + Number(XVales[0]); //coordinate transform
             let found;
             let last = 2;
-            for (let val of XVales) {
+            for (let val of XVales) { //find closest value to estimate slope (dx/dy)
                 if (Math.abs(val - x) < last) {
                     found = val;
                     last = Math.abs(val - x);
                 }
             }
-
             let y_0 = meanCord[found];
             let y_1 = meanCord[found + 1] || meanCord[found + 2];
             let x_0 = found;
             let x_1 = found + 1;
-            if (!y_1) {
+            if (!y_1) { //this is for the last point / if theres a missing point
                 y_1 = meanCord[found];
                 y_0 = meanCord[found - 1] || meanCord[found - 2];
                 x_0 = found - 1;
                 x_1 = found;
             }
-            let slope = (y_1 - y_0) / (x_1 - x_0) || 0
-            value += stepSize * slope;
+            let slope = (y_1 - y_0) / (x_1 - x_0) || 0 //compute slope or just assume 0
+            value += stepSize * slope; //Riemann Sum
         }
-
         return -value / Math.PI
-
-
-
-
     }
 
-
-    function solveA_1() {
-
-
-        let stepSize = 0.005
+    function solveA_1() { //We are solving an integral 0->PI Riemann Sum
         let value = 0;
-
         for (let θ = 0; θ < Math.PI; θ = θ + stepSize) {
             let x = cord * (1 - Math.cos(θ)) / 2 + Number(XVales[0]);
-
             let found;
             let last = 2;
             for (let val of XVales) {
@@ -345,7 +207,6 @@ function getTop() {
                     last = Math.abs(val - x);
                 }
             }
-
             let y_0 = meanCord[found];
             let y_1 = meanCord[found + 1] || meanCord[found + 2];
             let x_0 = found;
@@ -358,74 +219,52 @@ function getTop() {
             }
             let slope = (y_1 - y_0) / (x_1 - x_0) || 0
             let inside = slope * Math.cos(1 * θ);
-            value += stepSize * inside;
+            value += stepSize * inside; //Riemann Sum
         }
-
         return value * 2 / Math.PI
-
-
-
     }
-
     let A_0 = solveA_0();
     let A_1 = solveA_1();
-
-    console.log('solveA_0', A_0);
-    console.log('solveA_1', A_1);
-
+    console.log('solve A_0 @ 0 degree', A_0);
+    console.log('solve A_1', A_1);
     let liftCoef = 2 * Math.PI * (A_0 + A_1 / 2);
-    let liftCoefAtAngle = function(angle){
-      let a = (angle/360) * 2 * Math.PI
-      return 2 * Math.PI * (a + A_0 + A_1 / 2)
+    console.log('Lift Coeff', liftCoef);
+    let liftCoefAtAngle = function(angle) {
+        let a = (angle / 360) * 2 * Math.PI
+        return 2 * Math.PI * (a + A_0 + A_1 / 2)
     }
-
-
     return {
-      liftCoef,
-      liftCoefAtAngle,
-      A_0,
-      A_1
+        liftCoef,
+        liftCoefAtAngle,
+        A_0,
+        A_1,
+        cord
     }
-
-
-    //
 }
-
 
 
 let app = new Vue({
     data() {
         return {
-            instructions: 'Draw Top And Bottom Of Airfoil',
             fresh: true,
             stats: null
         }
     },
     methods: {
-        getTop(){
-          let stats = getTop();
-
-          console.log(stats);
-
-          this.stats = stats;
-
-          this.fresh = false;
+        Runtime() {
+            console.time('And It Only Took:')
+            let stats = Runtime();
+            console.log(stats);
+            this.stats = stats;
+            this.fresh = false;
+            console.timeEnd('And It Only Took:')
         }
     },
-    mounted() {
-
-
-
-
+    mounted() { //draw everything thats on the canvas pre-user
         init()
-
         drawDashedLine([0, 150], [500, 150])
         drawText([30, 30], 'Top of Airfoil')
         drawText([30, 300 - 30], 'Bottom of Airfoil')
-
-
-
-
     },
     components: {}
 }).$mount("#app");
