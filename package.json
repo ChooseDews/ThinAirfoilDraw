@@ -1,0 +1,25 @@
+{
+  "name": "thinairfoil",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "parcel index.html",
+    "build": "parcel build index.html -d docs --public-url ./",
+    "postinstall": "npm install -g parcel"
+  },
+  "author": "John Dews",
+  "license": "MIT",
+  "dependencies": {
+    "lodash": "^4.17.15",
+    "mathjs": "^6.2.5",
+    "normalize.css": "^8.0.1",
+    "pixi.js": "^5.2.0",
+    "purecss": "^1.0.1",
+    "vue": "^2.6.10"
+  },
+  "devDependencies": {
+    "cssnano": "^4.1.10"
+  }
+}
