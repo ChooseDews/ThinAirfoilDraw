@@ -252,12 +252,11 @@ let app = new Vue({
     },
     methods: {
         Runtime() {
-            console.time('And It Only Took:')
+            console.time('And It Only Took')
             let stats = Runtime();
-            console.log(stats);
             this.stats = stats;
             this.fresh = false;
-            console.timeEnd('And It Only Took:')
+            console.timeEnd('And It Only Took')
         }
     },
     mounted() { //draw everything thats on the canvas pre-user
