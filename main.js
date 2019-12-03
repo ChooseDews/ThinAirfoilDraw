@@ -53,23 +53,12 @@ function transpose(a) {
 
 
 
-var canvas, ctx, flag = false,
-    prevX = 0,
-    currX = 0,
-    prevY = 0,
-    currY = 0,
-    dot_flag = false;
 
 var x = "black",
-    y = 2;
-
-var h
-var w
-
-
-
-
-var canvas, ctx, flag = false,
+    y = 2,
+    h,
+    w,
+    canvas, ctx, flag = false,
     prevX = 0,
     currX = 0,
     prevY = 0,
@@ -100,34 +89,6 @@ function init() {
     }, false);
 }
 
-function color(obj) {
-    switch (obj.id) {
-        case "green":
-            x = "green";
-            break;
-        case "blue":
-            x = "blue";
-            break;
-        case "red":
-            x = "red";
-            break;
-        case "yellow":
-            x = "yellow";
-            break;
-        case "orange":
-            x = "orange";
-            break;
-        case "black":
-            x = "black";
-            break;
-        case "white":
-            x = "white";
-            break;
-    }
-    if (x == "white") y = 14;
-    else y = 2;
-
-}
 
 function draw() {
     ctx.beginPath();
