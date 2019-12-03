@@ -2,6 +2,11 @@
   color: green;
 }
 
+.warn{
+color: #c89f00 !important;  text-decoration: line-through;
+
+}
+
 canvas{
   margin: auto;
   display: block;
@@ -10,4 +15,18 @@ canvas{
 
 .p-1{
   padding: 10px;
+}
+
+.m0{
+  margin: 0;
+}
+.p0{
+  padding: 0;
+}
+
+.alert{
+  padding: 15px;
+background:#ffe300;
+margin: 15px;
+display: inline-flex;
 }

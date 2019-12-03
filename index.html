@@ -7,11 +7,12 @@
     <meta name="description" content="Thin Airfoil Theory of arbitrary airfoil shape">
     <meta name="keywords" content="airfoil,theory">
     <meta name="author" content="John Dews-Flick">
+    <style>.hide{display: none;} .show{display: block !important;}</style>
 </head>
 
 <body>
     <div id="app">
-        <div class="">
+        <div class="hide" v-bind:class="{show:true}">
             <div class="pure-g" style="max-width: 1200px; margin:auto; padding-top: 50px;">
                 <div class="pure-u-1 pure-u-lg-1-2"><canvas id="airfoil" width="500" height="300" style="border:2px solid;"></canvas>
                 <p v-if="stats">Cord Length: {{stats.cord}}px</p>
@@ -27,7 +28,11 @@
                   </div>
                 </div>
                 <div class="pure-u-1" style="padding: 20px" v-if="stats">
-                    <table class="pure-table" style="margin:auto">
+                    <div class="alert" v-if="unreasonable">
+                      <h5 class="m0">Results Obtained are Unreasonable/Impossible</h5>
+                    </div>
+                    <table class="pure-table" atyle="margin:auto">
+
                         <thead>
                             <tr>
                                 <th>Angle°</th>
@@ -37,7 +42,7 @@
                         <tbody>
                             <tr v-for="index in 20" :key="index">
                                 <td>{{ index-10 }}°</td>
-                                <td v-bind:class="{green:stats.liftCoefAtAngle(index-10)>0}">{{ stats.liftCoefAtAngle(index-10).toFixed(3) }}</td>
+                                <td v-bind:class="{green:stats.liftCoefAtAngle(index-10)>0, warn:Math.abs(stats.liftCoefAtAngle(index-10))>2.5}">{{ stats.liftCoefAtAngle(index-10).toFixed(3) }}</td>
                             </tr>
                         </tbody>
                     </table>

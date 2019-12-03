@@ -248,13 +248,19 @@ let app = new Vue({
     data() {
         return {
             fresh: true,
-            stats: null
+            stats: null,
+            unreasonable: false
         }
     },
     methods: {
         Runtime() {
             console.time('And It Only Took')
             let stats = Runtime();
+
+            let coefs = [];
+            for(let u=-7; u<7; u++) coefs.push(Math.abs(stats.liftCoefAtAngle(u)))
+            if(Math.max(...coefs) > 2.6) this.unreasonable = true;
+
             this.stats = stats;
             this.fresh = false;
             console.timeEnd('And It Only Took')
